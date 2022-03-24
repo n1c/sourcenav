@@ -12,8 +12,8 @@ Thankz [mrazza](https://github.com/mrazza) for open sourcing it.
 
 # Usage
 
-* `npm install sourcenav` to install the pcakge
-* `$(npm bin)/sourcenav parse <file.nav>` parses the nav file
+* `npm install` to install dependencies
+* `node bin/cli.js parse <file.nav>` parses the nav file
 
 # Limitation
 This library only works with the NAV Format version 16
