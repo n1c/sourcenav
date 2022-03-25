@@ -1,7 +1,20 @@
 import { Parser } from 'binary-parser';
 
-// type ConnectionDirection = 'Nort' | 'East' | 'South' | 'West';
-// type LadderDirection = 'Up' | 'Down';
+export interface INav {
+  Areas: IArea[],
+  Places: IPlace[],
+}
+
+export interface IArea {
+  AreaID: number,
+  PlaceID: number,
+  NorthWest: { x: number, y: number, z: number },
+  SouthEast: { x: number, y: number, z: number },
+}
+
+interface IPlace {
+  Name: string,
+}
 
 interface IParsedConnection {
   ConnectionCount: number,

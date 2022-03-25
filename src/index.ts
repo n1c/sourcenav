@@ -1,64 +1,20 @@
 import { Vec3 } from 'vec3';
-import { readFileSync } from 'fs';
-import NavParser from './parser';
+import Nav from './nav';
 
-// eslint-disable-next-line prefer-destructuring
-const log = console.log;
+const nukeNav = new Nav('de_nuke');
 
-if (process.argv.length < 3) {
-  log('Specify the full path to a demo & optional output path');
-  log('e.g.: ./index.js ~/test.dem ~/output.json');
+const NukePoints: [Vec3, string][] = [
+  [new Vec3(-1946.310669, -1080.746094, -327.755432), 'TSpawn'],
+  [new Vec3(-63.313015, -1117.243652, -351.906189), 'Lobby'],
+  [new Vec3(-68.239395, -1189.336792, -351.906189), 'Squeaky'],
+  [new Vec3(643.469788, -1403.712891, -351.906189), 'BombsiteA'],
+  [new Vec3(677.854187, -1647.915039, -351.906189), 'Mini'],
+  [new Vec3(1187.769653, -379.671570, -63.906189), 'Heaven'],
+  [new Vec3(1146.031250, -443.565308, -236.457581), 'Heaven'], // Half-way up hell/heaven ladder
+  [new Vec3(1236.391846, -437.617157, -351.906189), 'Hell'],
+];
 
-  process.exit(1);
-}
-
-interface INav {
-  Areas: IArea[],
-  Places: IPlace[],
-}
-
-interface IArea {
-  AreaID: number,
-  PlaceID: number,
-  NorthWest: { x: number, y: number, z: number },
-  SouthEast: { x: number, y: number, z: number },
-}
-
-interface IPlace {
-  Name: string,
-}
-
-const buffer = readFileSync(process.argv[2]);
-const nav: INav = NavParser.parse(buffer);
-
-const point = new Vec3(908.2178955078125, -590.444885253906, -414.96875); // Known "BombsiteA" on Nuke
-let bestArea: IArea | undefined;
-let bestDistance = Number.MAX_VALUE;
-
-function distanceCenter(area: IArea, point: Vec3): number {
-  const center = new Vec3(
-    (area.NorthWest.x + area.SouthEast.x) / 2,
-    (area.NorthWest.y + area.SouthEast.y) / 2,
-    (area.NorthWest.z + area.SouthEast.z) / 2,
-  );
-
-  return point.distanceTo(center);
-}
-
-nav.Areas.forEach((e) => {
-  const dist = distanceCenter(e, point);
-
-  if (dist < bestDistance) {
-    bestDistance = dist;
-    bestArea = e;
-  }
+NukePoints.forEach((e) => {
+  console.assert(nukeNav.placeForPoint(e[0]) === e[1], e[1]);
+  console.log('--', nukeNav.placeForPoint(e[0]));
 });
-
-console.log('DONE', nav.Places[bestArea!.PlaceID - 1]);
-
-/*
-x: 908.2178955078125
-y: -590.4448852539062
-z: -414.96875
-"BombsiteA"
-*/

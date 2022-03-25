@@ -1,22 +1,23 @@
-import { writeFile, readFileSync } from 'fs';
-import { program } from 'commander';
-import NavParser from './parser';
+import { readFileSync, writeFile } from 'fs';
+import NavParser from './navParser';
 
-program
-  .command('parse <navFile>')
-  .description('Returns JSON representation of the Valve navigation mesh file (.nav)')
-  .action((navFile: string) => {
-    const outputPath = navFile.replace('.nav', '.json');
-    const buffer = readFileSync(navFile);
-    const json = JSON.stringify(NavParser.parse(buffer));
+if (process.argv.length < 3) {
+  console.log('Specify the map name');
+  console.log('e.g.: ./cli.js de_nuke');
 
-    writeFile(outputPath, json, (err) => {
-      if (err) {
-        throw err;
-      }
+  process.exit(1);
+}
 
-      console.log('Output saved: ', outputPath);
-    });
-  });
+const path = `${__dirname}/../navfiles/${process.argv[2]}.nav`;
+const outputPath = path.replace('.nav', '.json');
 
-program.parse(process.argv);
+const buffer = readFileSync(path);
+const json = JSON.stringify(NavParser.parse(buffer));
+
+writeFile(outputPath, json, (err) => {
+  if (err) {
+    throw err;
+  }
+
+  console.log('Output saved: ', outputPath);
+});
